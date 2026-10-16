@@ -37,7 +37,7 @@ function Board({
             if (search.trim() !== "") {
 
                 res = await API.get(
-                    `/tasks/search/${search}?board=${selectedBoard}`
+                    `/tasks/search/${encodeURIComponent(search)}?board=${selectedBoard}`
                 );
 
             }

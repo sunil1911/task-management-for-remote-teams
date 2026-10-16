@@ -2,7 +2,6 @@ import { useState } from "react";
 import API from "../services/api";
 
 function AddTask({ selectedBoard, getTasks }) {
-
     const [title, setTitle] = useState("");
     const [priority, setPriority] = useState("Medium");
     const [assignedTo, setAssignedTo] = useState("Sunil");
@@ -10,13 +9,11 @@ function AddTask({ selectedBoard, getTasks }) {
     const [showForm, setShowForm] = useState(false);
 
     const addTask = async () => {
-
         if (title === "") {
             return;
         }
 
         try {
-
             await API.post("/tasks", {
                 title,
                 board: selectedBoard,
@@ -32,26 +29,18 @@ function AddTask({ selectedBoard, getTasks }) {
 
             getTasks();
             setShowForm(false);
-
         } catch (error) {
             console.log(error);
         }
-
     };
 
     return (
         <>
-            <button
-                onClick={() => setShowForm(true)}
-            >
-                + Add Task
-            </button>
+            <button onClick={() => setShowForm(true)}>+ Add Task</button>
 
             {showForm && (
                 <div className="modal-overlay">
-
                     <div className="add-task modal">
-
                         <select
                             value={priority}
                             onChange={(e) => setPriority(e.target.value)}
@@ -81,11 +70,7 @@ function AddTask({ selectedBoard, getTasks }) {
                             onChange={(e) => setDueDate(e.target.value)}
                         />
 
-                        <button
-                            onClick={addTask}
-                        >
-                            Save Task
-                        </button>
+                        <button onClick={addTask}>Save Task</button>
 
                         <button
                             onClick={() => setShowForm(false)}
@@ -95,14 +80,11 @@ function AddTask({ selectedBoard, getTasks }) {
                         >
                             Cancel
                         </button>
-
                     </div>
-
                 </div>
             )}
         </>
     );
-
 }
 
 export default AddTask;

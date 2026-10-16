@@ -1,28 +1,34 @@
 const express = require("express");
 const router = express.Router();
-
+const multer = require("multer");
+const path = require("path");
 const {
     addTask,
     getTasks,
+    getTask,
     updateTask,
     deleteTask,
     getTasksByBoard,
-    searchTasks,
-    getTasksByStatus,
-    getTasksByPriority,
-    getTasksByDueDate,
-    updateTimeSpent,
+    moveTask,
 } = require("../controllers/taskController");
+const { attachToTask } = require("../controllers/uploadController");
+const { auth, requireWrite } = require("../middleware/auth");
 
-router.get("/", getTasks);
-router.get("/board/:boardId", getTasksByBoard);
-router.get("/search/:keyword", searchTasks);
-router.get("/status/:status", getTasksByStatus);
-router.get("/priority/:priority", getTasksByPriority);
-router.get("/duedate/:date", getTasksByDueDate);
-router.post("/", addTask);
-router.put("/:id", updateTask);
-router.put("/time/:id", updateTimeSpent);
-router.delete("/:id", deleteTask);
+const storage = multer.diskStorage({
+    destination: path.join(__dirname, "..", "uploads"),
+    filename: (_req, file, cb) => {
+        cb(null, `${Date.now()}-${file.originalname.replace(/\s+/g, "-")}`);
+    },
+});
+const upload = multer({ storage, limits: { fileSize: 8 * 1024 * 1024 } });
+
+router.get("/", auth, getTasks);
+router.get("/board/:boardId", auth, getTasksByBoard);
+router.get("/:id", auth, getTask);
+router.post("/", auth, requireWrite, addTask);
+router.put("/:id/move", auth, requireWrite, moveTask);
+router.put("/:id", auth, requireWrite, updateTask);
+router.delete("/:id", auth, requireWrite, deleteTask);
+router.post("/:taskId/files", auth, requireWrite, upload.single("file"), attachToTask);
 
 module.exports = router;
